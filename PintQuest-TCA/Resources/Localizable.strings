@@ -1,0 +1,41 @@
+/* 
+  Localizable.strings
+  PintQuest-TCA
+
+  Created by Aleksandra Generowicz on 29/04/2023.
+  
+*/
+
+// MARK: Navigation bar titles
+"home.navigation.bar.title" = "Home";
+
+// MARK: Search bars
+"beer.search.bar.prompt" = "Search beer";
+
+// MARK: Menu tab titles
+"browse.menu.tab.title" = "Browse";
+"favourite.menu.tab.title" = "Favourite";
+
+// MARK: Vital stats
+"abv.fullname.text" = "Alcohol by Volume in Beer";
+"ibu.fullname.text" = "International Bittering Units";
+"ebc.fullname.text" = "Standard of Color Measurement";
+"abv.shortname.text" = "Alcohol";
+"ibu.shortname.text" = "Bitterness";
+"ebc.shortname.text" = "Color";
+
+// MARK: Beer detail view section titles
+"description.section.title.beer.details.view" = "Description: ";
+"parameters.section.title.beer.details.view" = "Parameters: ";
+"brewer.tips.section.title.beer.details.view" = "Brewer tips: ";
+
+// MARK: Beer card
+"brewed.from.title.beer.card" = "Brewed from:";
+
+// MARK: Searched beers collection
+"empty.state.title.browse.beers.collection" = "No searched beers.";
+"empty.state.button.title.browse.beers.collection" = "";
+
+// MARK: Fav beers collection
+"empty.state.title.fav.beers.collection" = "No fav beers.";
+"empty.state.button.title.fav.beers.collection" = "Tap to search one";

@@ -1,0 +1,12 @@
+//
+//  Dev.xcconfig
+//  PintQuest-TCA
+//
+//  Created by Aleksandra Generowicz on 07/05/2023.
+//
+
+// Dev.xcconfig
+
+// Server URL
+API_URL = api.punkapi.com
+API_VERSION = v2

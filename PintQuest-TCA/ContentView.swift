@@ -5,9 +5,13 @@
 //  Created by Aleksandra Generowicz on 29/04/2023.
 //
 
+import ComposableArchitecture
 import SwiftUI
 
 struct ContentView: View {
+    
+//    let store: StoreOf<Beers>
+    
     var body: some View {
         VStack {
             Image(systemName: "globe")
