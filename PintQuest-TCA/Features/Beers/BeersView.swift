@@ -35,16 +35,16 @@ struct BeersView: View {
                 //                    .offset(y: Constants.EmptyState.yOffset)
                 //            } else {
                 ScrollView {
-                    VStack {
+                    LazyVStack {
                         //                        beersList(viewStore)
                         ForEach(viewStore.beers) { beerDetails in
                             BeerCell(beer: beerDetails.beer,
                                      animation: animation,
                                      shouldHideImage: false)
-                            //                            .onAppear {
-                            //                                viewStore.send(.retrieveNextPageIfNeeded(currentItemId: beer.id))
-                            //                            }
-                            //                            //                            .onTapGesture {
+                            .onAppear {
+                                viewStore.send(.retrieveNextPageIfNeeded(currentItemId: beerDetails.beer.id))
+                            }
+                            //                            .onTapGesture {
                             //                            //                                withAnimation(.interactiveSpring(response: Constants.Animation.response, dampingFraction: Constants.Animation.dampingFraction, blendDuration: Constants.Animation.blendDuration)) {
                             //                            //                                    selectedBeer = beer
                             //                            //                                    showDetailView = true

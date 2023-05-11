@@ -52,6 +52,11 @@ struct Home: ReducerProtocol {
                 return .none
             }
         }
+        
+        Scope(state: \.beersState, action: /Action.beers) {
+            Beers()
+        }
+
     }
     
 //    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
