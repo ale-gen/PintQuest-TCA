@@ -78,6 +78,7 @@ struct BeerCell: View {
                             .padding(.trailing, 10.0)
                     }
                 }
+                .foregroundColor(.black)
                 .padding(20.0)
                 .frame(width: 2 * size.width / 3, height: 0.8 * size.height, alignment: .leading)
                 .background {

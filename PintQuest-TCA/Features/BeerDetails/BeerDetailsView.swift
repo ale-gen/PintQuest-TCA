@@ -92,6 +92,7 @@ struct BeerDetailView: View {
 //                isFavourite = isMarkedAsFav(id: beer.id)
             }
         }
+//        .navigationBarHidden(true)
     }
     
     @ViewBuilder

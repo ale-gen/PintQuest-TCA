@@ -30,32 +30,20 @@ struct BeersView: View {
     var body: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
             Group {
-                //            if viewModel.loaded && viewModel.beers.isEmpty {
-                //                EmptyStateView(model: EmptyState(image: Constants.EmptyState.image, title: Localizable.emptyStateTitleBrowseBeersCollection.value, buttonTitle: Localizable.emptyStateButtonTitleBrowseBeersCollection.value))
-                //                    .offset(y: Constants.EmptyState.yOffset)
-                //            } else {
-                ScrollView {
-                    LazyVStack {
-                        //                        beersList(viewStore)
-                        ForEach(viewStore.beers) { beerDetails in
-                            BeerCell(beer: beerDetails.beer,
-                                     animation: animation,
-                                     shouldHideImage: false)
-                            .onAppear {
-                                viewStore.send(.retrieveNextPageIfNeeded(currentItemId: beerDetails.beer.id))
-                            }
-                            //                            .onTapGesture {
-                            //                            //                                withAnimation(.interactiveSpring(response: Constants.Animation.response, dampingFraction: Constants.Animation.dampingFraction, blendDuration: Constants.Animation.blendDuration)) {
-                            //                            //                                    selectedBeer = beer
-                            //                            //                                    showDetailView = true
-                            //                            //                                }
-                            //                            //                            }
+                if viewStore.isLoading {
+                    ProgressView()
+                } else {
+                    ScrollView {
+                        LazyVStack {
+                            beersList(viewStore)
                         }
+                        .padding(.horizontal, Constants.horizontalPadding)
+                        .padding(.vertical, Constants.verticalPadding)
                     }
-                    .padding(.horizontal, Constants.horizontalPadding)
-                    .padding(.vertical, Constants.verticalPadding)
+                    if viewStore.isLoadingPage {
+                        ProgressView()
+                    }
                 }
-                //            }
             }
             .onAppear {
                 viewStore.send(.onAppear)
@@ -66,29 +54,29 @@ struct BeersView: View {
         }
     }
     
-    //    @ViewBuilder
-    //    private func beersList(_ viewStore: ViewStore<Beers.State, Beers.Action>) -> some View {
-    //        ForEachStore(
-    //            store.scope(state: { $0.beers },
-    //                        action: Beers.Action.beer(id:action:)
-    //                       ),
-    //            content: { beerStore in
-    //                WithViewStore(beerStore) { beerViewStore in
-    //                    NavigationLink(
-    //                        destination: BeerDetailView(store: beerStore),
-    //                        label: {
-    //                            BeerCell(beer: beerViewStore.state.beer,
-    //                                     animation: animation,
-    //                                     shouldHideImage: false)
-    //                            .onAppear {
-    //                                viewStore.send(.retrieveNextPageIfNeeded(currentItemId: beerViewStore.state.beer.id))
-    //                            }
-    //                        }
-    //                    )
-    //                }
-    //            }
-    //        )
-    //    }
+    @ViewBuilder
+    private func beersList(_ viewStore: ViewStore<Beers.State, Beers.Action>) -> some View {
+        ForEachStore(
+            store.scope(state: \.beers,
+                        action: Beers.Action.beer(id:action:)
+                       ),
+            content: { beerStore in
+                WithViewStore(beerStore) { beerViewStore in
+                    NavigationLink(
+                        destination: BeerDetailView(store: beerStore),
+                        label: {
+                            BeerCell(beer: beerViewStore.state.beer,
+                                     animation: animation,
+                                     shouldHideImage: false)
+                            .onAppear {
+                                viewStore.send(.retrieveNextPageIfNeeded(currentItemId: beerViewStore.state.beer.id))
+                            }
+                        }
+                    )
+                }
+            }
+        )
+    }
 }
 
 struct BeersView_Previews: PreviewProvider {

@@ -38,7 +38,7 @@ struct Beers: ReducerProtocol {
         case loadingActive(Bool)
         case loadingPageActive(Bool)
         
-        case beer(id: Int, action: BeerDetails.Action)
+        case beer(id: UUID, action: BeerDetails.Action)
         
         case onAppear
         case onDisappear
