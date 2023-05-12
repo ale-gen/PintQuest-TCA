@@ -25,7 +25,7 @@ struct HomeView: View {
             NavigationView {
                 VStack {
                     HStack(spacing: Constants.spacing) {
-                        ForEach(Home.HomeTab.allCases, id: \.self) { tab in
+                        ForEach(Home.State.HomeTab.allCases, id: \.self) { tab in
                             Button {
                                 viewStore.send(.changeSelectedTab(tab), animation: .easeInOut)
                             } label: {
@@ -45,10 +45,10 @@ struct HomeView: View {
                     switch viewStore.selectedTab {
                     case .browse:
                         BeersView(store: beersStore, animation: animation)
-                            .tag(Home.HomeTab.browse)
+                            .tag(Home.State.HomeTab.browse)
                     case .fav:
                         FavBeersView(store: favouritesStore, animation: animation)
-                            .tag(Home.HomeTab.fav)
+                            .tag(Home.State.HomeTab.fav)
                     }
                 }
                 //                .searchable(text: $searchName, prompt: Localizable.beerSearchBarPrompt.value)

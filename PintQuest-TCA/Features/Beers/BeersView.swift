@@ -48,9 +48,6 @@ struct BeersView: View {
             .onAppear {
                 viewStore.send(.onAppear)
             }
-            .onDisappear {
-                viewStore.send(.onDisappear)
-            }
         }
     }
     

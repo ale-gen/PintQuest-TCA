@@ -41,12 +41,9 @@ struct Beers: ReducerProtocol {
         case beer(id: UUID, action: BeerDetails.Action)
         
         case onAppear
-        case onDisappear
     }
     
     @Dependency(\.punkAPIClient) var punkAPIClient
-    
-    private enum BeerCompletionID {}
     
     var body: some ReducerProtocol<State, Action> {
         Reduce { state, action in
@@ -58,23 +55,24 @@ struct Beers: ReducerProtocol {
             case .retrieve:
                 state.beers = []
                 state.currentPage = 1
-                return .task { [page = state.currentPage] in
-                    await .beersResponse(TaskResult { try await self.punkAPIClient.fetchByPage(page) })
+                return .run { [page = state.currentPage] send in
+                    await send(.loadingActive(true))
+                    await send(.beersResponse(TaskResult { try await self.punkAPIClient.fetchByPage(page) }))
                 }
-                //            return .concatenate(
-                //                .init(value: .loadingActive(true)),
-                //                .init(value: )
-                //            )
                 
             case .retrieveNextPageIfNeeded(currentItemId: let itemId):
                 guard state.isLastItem(itemId) else { return .none }
                 state.currentPage += 1
-                return .task { [page = state.currentPage] in
-                    await .beersResponse(TaskResult { try await self.punkAPIClient.fetchByPage(page) })
+                return .run { [page = state.currentPage] send in
+                    await send(.loadingPageActive(true))
+                    await send(.beersResponse(TaskResult { try await self.punkAPIClient.fetchByPage(page) }))
                 }
                 
             case .retrieveFavorites:
                 // TODO: Fetch fav beers from fav client
+                return .none
+                
+            case .beer(id:action:):
                 return .none
                 
             case .beersResponse(.success(let beers)):
@@ -84,10 +82,13 @@ struct Beers: ReducerProtocol {
                                           beer: beer)
                     )
                 }
-                return .concatenate(
-                    .init(value: .loadingActive(false)),
-                    .init(value: .loadingPageActive(false))
-                )
+                return .run { send in
+                    await send(.loadingActive(false))
+                    await send(.loadingPageActive(false))
+                }
+                
+            case .favoritesResponse(.failure(_)):
+                return .none
                 
             case .beersResponse(.failure(_)):
                 return .concatenate(
@@ -106,9 +107,6 @@ struct Beers: ReducerProtocol {
             case .loadingPageActive(let isLoadingPage):
                 state.isLoadingPage = isLoadingPage
                 return .none
-                
-            default:
-                return .none
             }
         }
         
@@ -117,5 +115,3 @@ struct Beers: ReducerProtocol {
         }
     }
 }
-
-

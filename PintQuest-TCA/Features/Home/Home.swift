@@ -10,21 +10,22 @@ import Foundation
 
 struct Home: ReducerProtocol {
     
-    enum HomeTab: CaseIterable {
-        case browse
-        case fav
+    struct State: Equatable {
         
-        var name: String {
-            switch self {
-            case .browse:
-                return Localizable.browseMenuTabTitle.value
-            case .fav:
-                return Localizable.favouriteMenuTabTitle.value
+        enum HomeTab: CaseIterable {
+            case browse
+            case fav
+            
+            var name: String {
+                switch self {
+                case .browse:
+                    return Localizable.browseMenuTabTitle.value
+                case .fav:
+                    return Localizable.favouriteMenuTabTitle.value
+                }
             }
         }
-    }
-    
-    struct State: Equatable {
+        
         var search: String = .empty
         var selectedTab: HomeTab = .browse
         var beersState = Beers.State()
@@ -34,29 +35,34 @@ struct Home: ReducerProtocol {
     enum Action {
         case beers(Beers.Action)
         case favBeers(FavBeers.Action)
-        case changeSelectedTab(HomeTab)
+        case changeSelectedTab(State.HomeTab)
     }
     
     var body: some ReducerProtocol<State, Action> {
+        Scope(state: \.beersState, action: /Action.beers) {
+            Beers()
+        }
+        
         Reduce { state, action in
             switch action {
+            case .changeSelectedTab(let tab):
+                state.selectedTab = tab
+                return .none
+                
             case .beers(.beer(id: _, action: .toggleFavouriteResponse(.success(let favBeers)))):
                 state.favBeersState.beers = .init(uniqueElements: favBeers.map { beer in
                     BeerDetails.State(id: UUID(),
                                       beer: beer)
                 })
                 return .none
-            case .changeSelectedTab(let tab):
-                state.selectedTab = tab
+                
+            case .beers:
                 return .none
-            default:
+                
+            case .favBeers:
+                // TODO: Fetch
                 return .none
             }
         }
-        
-        Scope(state: \.beersState, action: /Action.beers) {
-            Beers()
-        }
-
     }
 }
