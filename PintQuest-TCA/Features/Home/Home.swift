@@ -25,6 +25,7 @@ struct Home: ReducerProtocol {
     }
     
     struct State: Equatable {
+        var search: String = .empty
         var selectedTab: HomeTab = .browse
         var beersState = Beers.State()
         var favBeersState = FavBeers.State()
@@ -58,20 +59,4 @@ struct Home: ReducerProtocol {
         }
 
     }
-    
-//    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
-//        switch action {
-//        case .beers(.beer(id: _, action: .toggleFavouriteResponse(.success(let favBeers)))):
-//            state.favBeersState.beers = .init(uniqueElements: favBeers.map { beer in
-//                BeerDetails.State(id: UUID(),
-//                                  beer: beer)
-//            })
-//            return .none
-//        case .changeSelectedTab(let tab):
-//            state.selectedTab = tab
-//            return .none
-//        default:
-//            return .none
-//        }
-//    }
 }

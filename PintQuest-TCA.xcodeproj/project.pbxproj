@@ -23,6 +23,7 @@
 		7A46FC2B29FD211E00949BB3 /* BeerVitalStat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A46FC2A29FD211E00949BB3 /* BeerVitalStat.swift */; };
 		7A46FC2D29FD214B00949BB3 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A46FC2C29FD214B00949BB3 /* Icons.swift */; };
 		7A46FC2F29FD218400949BB3 /* Double+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A46FC2E29FD218400949BB3 /* Double+Extension.swift */; };
+		7A8179B22A0E5B8200E8B732 /* FavBeersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8179B12A0E5B8200E8B732 /* FavBeersView.swift */; };
 		7A8E2AFD2A07A51E007AA2D4 /* PunkAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8E2AFC2A07A51E007AA2D4 /* PunkAPIClient.swift */; };
 		7A8E2B002A07A89B007AA2D4 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8E2AFF2A07A89B007AA2D4 /* Router.swift */; };
 		7A8E2B042A07AA0A007AA2D4 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8E2B032A07AA0A007AA2D4 /* Environment.swift */; };
@@ -54,6 +55,7 @@
 		7A46FC2C29FD214B00949BB3 /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
 		7A46FC2E29FD218400949BB3 /* Double+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extension.swift"; sourceTree = "<group>"; };
 		7A5312F62A0C4A4000A094CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7A8179B12A0E5B8200E8B732 /* FavBeersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavBeersView.swift; sourceTree = "<group>"; };
 		7A8E2AFC2A07A51E007AA2D4 /* PunkAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PunkAPIClient.swift; sourceTree = "<group>"; };
 		7A8E2AFF2A07A89B007AA2D4 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		7A8E2B022A07A914007AA2D4 /* Dev.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Dev.xcconfig; sourceTree = "<group>"; };
@@ -241,6 +243,7 @@
 			isa = PBXGroup;
 			children = (
 				7AEC41BE29FE707D00B0A7A4 /* FavBeers.swift */,
+				7A8179B12A0E5B8200E8B732 /* FavBeersView.swift */,
 			);
 			path = FavBeers;
 			sourceTree = "<group>";
@@ -346,6 +349,7 @@
 				7A46FC1E29FD1E9F00949BB3 /* Color+Extension.swift in Sources */,
 				7A46FC1629FD1BEA00949BB3 /* Beer.swift in Sources */,
 				7A46FC0329FD18B300949BB3 /* PintQuest_TCAApp.swift in Sources */,
+				7A8179B22A0E5B8200E8B732 /* FavBeersView.swift in Sources */,
 				7A46FC2F29FD218400949BB3 /* Double+Extension.swift in Sources */,
 				7A8E2B042A07AA0A007AA2D4 /* Environment.swift in Sources */,
 				7A46FC2929FD20DF00949BB3 /* StatLevelView.swift in Sources */,

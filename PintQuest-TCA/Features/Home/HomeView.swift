@@ -27,10 +27,7 @@ struct HomeView: View {
                     HStack(spacing: Constants.spacing) {
                         ForEach(Home.HomeTab.allCases, id: \.self) { tab in
                             Button {
-//                                withAnimation {
-                                    viewStore.send(.changeSelectedTab(tab))
-//                                }
-                                
+                                viewStore.send(.changeSelectedTab(tab), animation: .easeInOut)
                             } label: {
                                 Text(tab.name)
                                     .foregroundColor(viewStore.selectedTab == tab ? .black : .gray)
@@ -50,34 +47,13 @@ struct HomeView: View {
                         BeersView(store: beersStore, animation: animation)
                             .tag(Home.HomeTab.browse)
                     case .fav:
-                        EmptyView()
-//                        FavBeersView(store: favouritesStore)
+                        FavBeersView(store: favouritesStore, animation: animation)
+                            .tag(Home.HomeTab.fav)
                     }
                 }
-                .overlay {
-//                    if let selectedBeer, showDetailView {
-//                        BeerDetailView(animation: animation,
-//                                       beer: selectedBeer,
-//                                       viewModel: memoryViewModel,
-//                                       show: $showDetailView)
-//                        .transition(.identity)
-//                        .navigationTitle(String.empty)
-//                        .toolbar(.hidden, for: .navigationBar)
-//                    }
-                }
-//                .searchable(text: $searchName, prompt: Localizable.beerSearchBarPrompt.value)
+                //                .searchable(text: $searchName, prompt: Localizable.beerSearchBarPrompt.value)
                 .navigationTitle(Localizable.homeNavigationBarTitle.value)
                 .transition(.opacity)
-//                .onChange(of: searchName) { newValue in
-//                    apiViewModel.resetPagination()
-//                    guard newValue.isEmpty else {
-//                        memoryViewModel.getBeersByName(newValue)
-//                        apiViewModel.getBeersByName(newValue)
-//                        return
-//                    }
-//                    memoryViewModel.getBeers()
-//                    apiViewModel.getBeers()
-//                }
             }
         }
     }
