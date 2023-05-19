@@ -17,8 +17,8 @@ struct FavBeers: ReducerProtocol {
         case retrieveFavourites
         case favouritesResponse(Result<[Beer], Never>)
         case beer(id: UUID, action: BeerDetails.Action)
+        case browseAllBeers
         case onAppear
-        case onDisappear
     }
     
     private enum FavBeersCancelId {}
@@ -42,11 +42,11 @@ struct FavBeers: ReducerProtocol {
             return .init(value: .retrieveFavourites)
         case .beer(id: _, action: _):
             return .none
+        case .browseAllBeers:
+            return .none
         case .onAppear:
             guard state.beers.isEmpty else { return .none }
             return .init(value: .retrieveFavourites)
-        case .onDisappear:
-            return .cancel(id: FavBeersCancelId.self)
         }
     }
 }

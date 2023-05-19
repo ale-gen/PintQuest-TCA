@@ -9,60 +9,78 @@ import ComposableArchitecture
 import Foundation
 
 struct Home: ReducerProtocol {
-    
-    struct State: Equatable {
+    enum State: Equatable, CaseIterable, Hashable {
         
-        enum HomeTab: CaseIterable {
-            case browse
-            case fav
-            
-            var name: String {
-                switch self {
-                case .browse:
-                    return Localizable.browseMenuTabTitle.value
-                case .fav:
-                    return Localizable.favouriteMenuTabTitle.value
-                }
+        static var allCases: [State] {
+            return [.browse(.init()), .fav(.init())]
+        }
+        
+        var identifier: String {
+            return UUID().uuidString
+        }
+        
+        public func hash(into hasher: inout Hasher) {
+            return hasher.combine(identifier)
+        }
+        
+        public static func == (lhs: State, rhs: State) -> Bool {
+            return lhs.identifier == rhs.identifier
+        }
+        
+        case browse(Beers.State)
+        case fav(FavBeers.State)
+        
+        public init() {
+            self = .browse(Beers.State())
+        }
+        
+        var name: String {
+            switch self {
+            case .browse:
+                return Localizable.browseMenuTabTitle.value
+            case .fav:
+                return Localizable.favouriteMenuTabTitle.value
             }
         }
         
-        var search: String = .empty
-        var selectedTab: HomeTab = .browse
-        var beersState = Beers.State()
-        var favBeersState = FavBeers.State()
+        var action: Action {
+            switch self {
+            case .browse:
+                return .favBeers(.browseAllBeers)
+            case .fav:
+                return .browse(.favBeers)
+            }
+        }
     }
     
     enum Action {
-        case beers(Beers.Action)
+        case browse(Beers.Action)
         case favBeers(FavBeers.Action)
-        case changeSelectedTab(State.HomeTab)
     }
     
-    var body: some ReducerProtocol<State, Action> {
-        Scope(state: \.beersState, action: /Action.beers) {
-            Beers()
-        }
-        
+    public var body: some ReducerProtocol<State, Action> {
         Reduce { state, action in
             switch action {
-            case .changeSelectedTab(let tab):
-                state.selectedTab = tab
+            case .browse(.favBeers):
+                state = .fav(FavBeers.State())
                 return .none
                 
-            case .beers(.beer(id: _, action: .toggleFavouriteResponse(.success(let favBeers)))):
-                state.favBeersState.beers = .init(uniqueElements: favBeers.map { beer in
-                    BeerDetails.State(id: UUID(),
-                                      beer: beer)
-                })
+            case .browse:
                 return .none
                 
-            case .beers:
+            case .favBeers(FavBeers.Action.browseAllBeers):
+                state = .browse(Beers.State())
                 return .none
                 
             case .favBeers:
-                // TODO: Fetch
                 return .none
             }
+        }
+        .ifCaseLet(/State.browse, action: /Action.browse) {
+            Beers()
+        }
+        .ifCaseLet(/State.fav, action: /Action.favBeers) {
+            FavBeers()
         }
     }
 }

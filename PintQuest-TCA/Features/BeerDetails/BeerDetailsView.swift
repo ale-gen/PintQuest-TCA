@@ -49,11 +49,12 @@ struct BeerDetailView: View {
         static let spacing: CGFloat = 10.0
     }
     
-//    let animation: Namespace.ID
+    @SwiftUI.Environment(\.presentationMode) var presentationMode
     let store: StoreOf<BeerDetails>
+    let animation: Namespace.ID
     
     var body: some View {
-        WithViewStore(self.store, observe: { $0 }) { viewStore in
+        WithViewStore(self.store) { viewStore in
             ZStack {
                 beerImage(viewStore.beer.imageUrl)
                 VStack {
@@ -89,10 +90,10 @@ struct BeerDetailView: View {
                     .ignoresSafeArea()
             )
             .onAppear {
-//                isFavourite = isMarkedAsFav(id: beer.id)
+                viewStore.send(.onAppear)
             }
         }
-//        .navigationBarHidden(true)
+        .navigationBarHidden(true)
     }
     
     @ViewBuilder
@@ -100,7 +101,7 @@ struct BeerDetailView: View {
         HStack {
             Button {
                 withAnimation(.easeIn(duration: Constants.Animation.duration)) {
-//                    show.toggle()
+                    presentationMode.wrappedValue.dismiss()
                 }
             } label: {
                 Icons.leftArrow.value
@@ -128,19 +129,19 @@ struct BeerDetailView: View {
             Circle()
                 .fill(Constants.Circle.color)
                 .offset(x: Constants.Circle.additionalXOffset)
-//            if show {
-                CachedAsyncImage(url: URL(string: url ?? .empty)) { image in
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxHeight: .infinity)
-                        .padding(Constants.Image.padding)
-                        .shadow(radius: Constants.Image.shadowRadius)
-//                        .matchedGeometryEffect(id: url, in: animation)
-                } placeholder: {
-                    ProgressView()
-                }
-//            }
+            //            if show {
+            CachedAsyncImage(url: URL(string: url ?? .empty)) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxHeight: .infinity)
+                    .padding(Constants.Image.padding)
+                    .shadow(radius: Constants.Image.shadowRadius)
+                    .matchedGeometryEffect(id: url, in: animation)
+            } placeholder: {
+                ProgressView()
+            }
+            //            }
         }
         .offset(x: Constants.Image.xOffset)
     }
@@ -187,14 +188,13 @@ struct BeerDetailView: View {
 }
 
 struct BeerDetailView_Previews: PreviewProvider {
-    @Namespace static var namespace
-
+    @Namespace static var animation
+    
     static var previews: some View {
         BeerDetailView(store: Store(initialState: BeerDetails.State(id: UUID(),
                                                                     beer: Beer.mock),
-                                    reducer: BeerDetails()))
-//        BeerDetailView(animation: namespace,
-//                       show: .constant(true))
+                                    reducer: BeerDetails()),
+                       animation: animation)
     }
 }
 

@@ -41,9 +41,6 @@ struct FavBeersView: View {
             .onAppear {
                 viewStore.send(.onAppear)
             }
-            .onDisappear {
-                viewStore.send(.onDisappear)
-            }
         }
     }
     
@@ -56,7 +53,8 @@ struct FavBeersView: View {
             content: { beerStore in
                 WithViewStore(beerStore) { beerViewStore in
                     NavigationLink(
-                        destination: BeerDetailView(store: beerStore),
+                        destination: BeerDetailView(store: beerStore,
+                                                    animation: animation),
                         label: {
                             BeerCell(beer: beerViewStore.state.beer,
                                      animation: animation,

@@ -39,6 +39,7 @@ struct Beers: ReducerProtocol {
         case loadingPageActive(Bool)
         
         case beer(id: UUID, action: BeerDetails.Action)
+        case favBeers
         
         case onAppear
     }
@@ -87,6 +88,9 @@ struct Beers: ReducerProtocol {
                     await send(.loadingPageActive(false))
                 }
                 
+            case .favBeers:
+                return .none
+                
             case .favoritesResponse(.failure(_)):
                 return .none
                 
@@ -109,7 +113,6 @@ struct Beers: ReducerProtocol {
                 return .none
             }
         }
-        
         .forEach(\.beers, action: /Action.beer(id:action:)) {
             BeerDetails()
         }

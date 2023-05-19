@@ -59,8 +59,10 @@ struct BeersView: View {
                        ),
             content: { beerStore in
                 WithViewStore(beerStore) { beerViewStore in
+                    //TODO: Remove navigation link
                     NavigationLink(
-                        destination: BeerDetailView(store: beerStore),
+                        destination: BeerDetailView(store: beerStore,
+                                                    animation: animation),
                         label: {
                             BeerCell(beer: beerViewStore.state.beer,
                                      animation: animation,
