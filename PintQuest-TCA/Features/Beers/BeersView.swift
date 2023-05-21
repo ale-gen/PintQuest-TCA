@@ -13,11 +13,6 @@ struct BeersView: View {
     private enum Constants {
         static let horizontalPadding: CGFloat = 15.0
         static let verticalPadding: CGFloat = 20.0
-        enum Animation {
-            static let response: CGFloat = 0.9
-            static let dampingFraction: CGFloat = 0.9
-            static let blendDuration: CGFloat = 0.1
-        }
         enum EmptyState {
             static let yOffset: CGFloat = -50.0
             static let image: Image = Image("Beers")
@@ -26,9 +21,10 @@ struct BeersView: View {
     
     var store: StoreOf<Beers>
     let animation: Namespace.ID
+    @State private var hideImageForAnimation: Bool = false
     
     var body: some View {
-        WithViewStore(store, observe: { $0 }) { viewStore in
+        WithViewStore(store) { viewStore in
             Group {
                 if viewStore.isLoading {
                     ProgressView()
@@ -62,11 +58,13 @@ struct BeersView: View {
                     //TODO: Remove navigation link
                     NavigationLink(
                         destination: BeerDetailView(store: beerStore,
-                                                    animation: animation),
+                                                    animation: animation,
+                                                    showImage: $hideImageForAnimation)
+                        .transition(.identity),
                         label: {
                             BeerCell(beer: beerViewStore.state.beer,
                                      animation: animation,
-                                     shouldHideImage: false)
+                                     shouldHideImage: $hideImageForAnimation)
                             .onAppear {
                                 viewStore.send(.retrieveNextPageIfNeeded(currentItemId: beerViewStore.state.beer.id))
                             }

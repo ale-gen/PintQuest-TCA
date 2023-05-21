@@ -54,11 +54,12 @@ struct FavBeersView: View {
                 WithViewStore(beerStore) { beerViewStore in
                     NavigationLink(
                         destination: BeerDetailView(store: beerStore,
-                                                    animation: animation),
+                                                    animation: animation,
+                                                    showImage: .constant(false)),
                         label: {
                             BeerCell(beer: beerViewStore.state.beer,
                                      animation: animation,
-                                     shouldHideImage: false)
+                                     shouldHideImage: .constant(false))
                         }
                     )
                 }
@@ -71,8 +72,8 @@ struct FavBeersView_Previews: PreviewProvider {
     @Namespace static var animation
     
     static var previews: some View {
-        BeersView(store: Store(initialState: Beers.State(beers: IdentifiedArrayOf(uniqueElements: [BeerDetails.State(id: UUID(), beer: Beer.mock)])),
-                               reducer: Beers()),
+        FavBeersView(store: Store(initialState: FavBeers.State(beers: IdentifiedArrayOf(uniqueElements: [BeerDetails.State(id: UUID(), beer: Beer.mock)])),
+                               reducer: FavBeers()),
                   animation: animation)
     }
 }

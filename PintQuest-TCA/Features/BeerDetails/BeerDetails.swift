@@ -13,7 +13,7 @@ struct BeerDetails: ReducerProtocol {
         let id: UUID
         var beer: Beer
         
-        var isFavourite = false
+        var isFavourite: Bool = false
         var favourites: [Beer] = []
     }
     

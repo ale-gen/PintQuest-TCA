@@ -41,6 +41,9 @@ struct BeerDetailView: View {
         }
         enum Animation {
             static let duration: CGFloat = 0.35
+            static let response: CGFloat = 0.9
+            static let dampingFraction: CGFloat = 0.9
+            static let blendDuration: CGFloat = 0.1
         }
         enum Background {
             static let color: Color = .white
@@ -52,11 +55,12 @@ struct BeerDetailView: View {
     @SwiftUI.Environment(\.presentationMode) var presentationMode
     let store: StoreOf<BeerDetails>
     let animation: Namespace.ID
+    @Binding var showImage: Bool
     
     var body: some View {
         WithViewStore(self.store) { viewStore in
             ZStack {
-                beerImage(viewStore.beer.imageUrl)
+                beerImage(viewStore.beer.imageUrl, beerId: viewStore.beer.id)
                 VStack {
                     navBar(rightButton: favButton(viewStore.isFavourite, action: { viewStore.send(.toggleFavourite) }))
                     HStack {
@@ -90,6 +94,11 @@ struct BeerDetailView: View {
                     .ignoresSafeArea()
             )
             .onAppear {
+                withAnimation(.interactiveSpring(response: Constants.Animation.response,
+                                                 dampingFraction: Constants.Animation.dampingFraction,
+                                                 blendDuration: Constants.Animation.blendDuration)) {
+                    showImage = true
+                }
                 viewStore.send(.onAppear)
             }
         }
@@ -101,6 +110,7 @@ struct BeerDetailView: View {
         HStack {
             Button {
                 withAnimation(.easeIn(duration: Constants.Animation.duration)) {
+                    showImage = false
                     presentationMode.wrappedValue.dismiss()
                 }
             } label: {
@@ -124,24 +134,24 @@ struct BeerDetailView: View {
     }
     
     @ViewBuilder
-    private func beerImage(_ url: String?) -> some View {
+    private func beerImage(_ url: String?, beerId: Int) -> some View {
         ZStack {
             Circle()
                 .fill(Constants.Circle.color)
                 .offset(x: Constants.Circle.additionalXOffset)
-            //            if show {
-            CachedAsyncImage(url: URL(string: url ?? .empty)) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxHeight: .infinity)
-                    .padding(Constants.Image.padding)
-                    .shadow(radius: Constants.Image.shadowRadius)
-                    .matchedGeometryEffect(id: url, in: animation)
-            } placeholder: {
-                ProgressView()
+            if showImage {
+                CachedAsyncImage(url: URL(string: url ?? .empty)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxHeight: .infinity)
+                        .padding(Constants.Image.padding)
+                        .shadow(radius: Constants.Image.shadowRadius)
+                        .matchedGeometryEffect(id: "\(beerId)/\(String(describing: url))", in: animation)
+                } placeholder: {
+                    ProgressView()
+                }
             }
-            //            }
         }
         .offset(x: Constants.Image.xOffset)
     }
@@ -194,7 +204,7 @@ struct BeerDetailView_Previews: PreviewProvider {
         BeerDetailView(store: Store(initialState: BeerDetails.State(id: UUID(),
                                                                     beer: Beer.mock),
                                     reducer: BeerDetails()),
-                       animation: animation)
+                       animation: animation,
+                       showImage: .constant(true))
     }
 }
-

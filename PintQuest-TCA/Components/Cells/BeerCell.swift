@@ -34,7 +34,7 @@ struct BeerCell: View {
     
     let beer: Beer
     let animation: Namespace.ID
-    let shouldHideImage: Bool
+    @Binding var shouldHideImage: Bool
     
     var body: some View {
         GeometryReader { geo in
@@ -107,7 +107,7 @@ struct BeerCell: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: width, height: 0.8 * height)
                 .clipShape(RoundedRectangle(cornerRadius: Constants.Image.cornerRadius, style: .continuous))
-                .matchedGeometryEffect(id: beer.id, in: animation)
+                .matchedGeometryEffect(id: "\(beer.id)/\(String(describing: beer.imageUrl))", in: animation)
                 .padding(Constants.Image.padding)
                 .background {
                     RoundedRectangle(cornerRadius: Constants.Image.cornerRadius)
@@ -128,6 +128,6 @@ struct BeerRowView_Previews: PreviewProvider {
     static var previews: some View {
         BeerCell(beer: Beer.mock,
                  animation: namespace,
-                 shouldHideImage: false)
+                 shouldHideImage: .constant(false))
     }
 }
