@@ -15,6 +15,9 @@ struct BeerDetails: ReducerProtocol {
         
         var isFavourite: Bool = false
         var favourites: [Beer] = []
+        
+        // MARK: For animations
+        var showImage: Bool = false
     }
     
     enum Action {
@@ -31,6 +34,7 @@ struct BeerDetails: ReducerProtocol {
     func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .onAppear:
+            state.showImage = true
             // MARK: Fetch fav beers
             return .none
         case .toggleFavourite:
@@ -49,6 +53,7 @@ struct BeerDetails: ReducerProtocol {
             state.isFavourite = favourites.contains(where: { $0.id == state.beer.id })
             return .none
         case .onDisappear:
+            state.showImage = false
             // MARK: Cancel queue
             return .cancel(id: BeerDetailCancelId.self)
         }

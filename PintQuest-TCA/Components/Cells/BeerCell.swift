@@ -34,7 +34,7 @@ struct BeerCell: View {
     
     let beer: Beer
     let animation: Namespace.ID
-    @Binding var shouldHideImage: Bool
+    var shouldHideImage: Bool
     
     var body: some View {
         GeometryReader { geo in
@@ -128,6 +128,6 @@ struct BeerRowView_Previews: PreviewProvider {
     static var previews: some View {
         BeerCell(beer: Beer.mock,
                  animation: namespace,
-                 shouldHideImage: .constant(false))
+                 shouldHideImage: false)
     }
 }

@@ -19,9 +19,8 @@ struct BeersView: View {
         }
     }
     
-    var store: StoreOf<Beers>
     let animation: Namespace.ID
-    @State private var hideImageForAnimation: Bool = false
+    var store: StoreOf<Beers>
     
     var body: some View {
         WithViewStore(store) { viewStore in
@@ -58,13 +57,12 @@ struct BeersView: View {
                     //TODO: Remove navigation link
                     NavigationLink(
                         destination: BeerDetailView(store: beerStore,
-                                                    animation: animation,
-                                                    showImage: $hideImageForAnimation)
+                                                    animation: animation)
                         .transition(.identity),
                         label: {
                             BeerCell(beer: beerViewStore.state.beer,
                                      animation: animation,
-                                     shouldHideImage: $hideImageForAnimation)
+                                     shouldHideImage: beerViewStore.state.showImage)
                             .onAppear {
                                 viewStore.send(.retrieveNextPageIfNeeded(currentItemId: beerViewStore.state.beer.id))
                             }
@@ -80,9 +78,9 @@ struct BeersView_Previews: PreviewProvider {
     @Namespace static var animation
     
     static var previews: some View {
-        BeersView(store: Store(initialState: Beers.State(beers: IdentifiedArrayOf(uniqueElements: [BeerDetails.State(id: UUID(), beer: Beer.mock)])),
-                               reducer: Beers()),
-                  animation: animation)
+        BeersView(animation: animation,
+                  store: Store(initialState: Beers.State(beers: IdentifiedArrayOf(uniqueElements: [BeerDetails.State(id: UUID(), beer: Beer.mock)])),
+                                                     reducer: Beers()))
     }
 }
 

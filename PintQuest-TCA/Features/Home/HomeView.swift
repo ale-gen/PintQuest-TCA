@@ -44,10 +44,10 @@ struct HomeView: View {
                     
                     SwitchStore(store) {
                         CaseLet(state: /Home.State.browse, action: Home.Action.browse) { store in
-                            BeersView(store: store, animation: animation)
+                            BeersView(animation: animation, store: store)
                         }
                         CaseLet(state: /Home.State.fav, action: Home.Action.favBeers) { store in
-                            FavBeersView(store: store, animation: animation)
+                            FavBeersView(animation: animation, store: store)
                         }
                     }
                 }

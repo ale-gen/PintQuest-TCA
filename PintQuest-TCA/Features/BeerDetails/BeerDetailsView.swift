@@ -55,14 +55,15 @@ struct BeerDetailView: View {
     @SwiftUI.Environment(\.presentationMode) var presentationMode
     let store: StoreOf<BeerDetails>
     let animation: Namespace.ID
-    @Binding var showImage: Bool
     
     var body: some View {
         WithViewStore(self.store) { viewStore in
             ZStack {
-                beerImage(viewStore.beer.imageUrl, beerId: viewStore.beer.id)
+                beerImage(viewStore.beer.imageUrl, beerId: viewStore.beer.id, showImage: viewStore.showImage)
                 VStack {
-                    navBar(rightButton: favButton(viewStore.isFavourite, action: { viewStore.send(.toggleFavourite) }))
+                    navBar(backButtonAction: { viewStore.send(.onDisappear) },
+                           rightButton: favButton(viewStore.isFavourite,
+                                                  action: { viewStore.send(.toggleFavourite) }))
                     HStack {
                         Spacer(minLength: Constants.Background.leadingSpacing)
                         VStack(alignment: .leading, spacing: Constants.spacing) {
@@ -94,23 +95,20 @@ struct BeerDetailView: View {
                     .ignoresSafeArea()
             )
             .onAppear {
-                withAnimation(.interactiveSpring(response: Constants.Animation.response,
-                                                 dampingFraction: Constants.Animation.dampingFraction,
-                                                 blendDuration: Constants.Animation.blendDuration)) {
-                    showImage = true
-                }
-                viewStore.send(.onAppear)
+                viewStore.send(.onAppear, animation: .interactiveSpring(response: Constants.Animation.response,
+                                                                        dampingFraction: Constants.Animation.dampingFraction,
+                                                                        blendDuration: Constants.Animation.blendDuration))
             }
         }
         .navigationBarHidden(true)
     }
     
     @ViewBuilder
-    private func navBar(rightButton: some View) -> some View {
+    private func navBar(backButtonAction: @escaping () -> Void, rightButton: some View) -> some View {
         HStack {
             Button {
+                backButtonAction()
                 withAnimation(.easeIn(duration: Constants.Animation.duration)) {
-                    showImage = false
                     presentationMode.wrappedValue.dismiss()
                 }
             } label: {
@@ -134,7 +132,7 @@ struct BeerDetailView: View {
     }
     
     @ViewBuilder
-    private func beerImage(_ url: String?, beerId: Int) -> some View {
+    private func beerImage(_ url: String?, beerId: Int, showImage: Bool) -> some View {
         ZStack {
             Circle()
                 .fill(Constants.Circle.color)
@@ -204,7 +202,6 @@ struct BeerDetailView_Previews: PreviewProvider {
         BeerDetailView(store: Store(initialState: BeerDetails.State(id: UUID(),
                                                                     beer: Beer.mock),
                                     reducer: BeerDetails()),
-                       animation: animation,
-                       showImage: .constant(true))
+                       animation: animation)
     }
 }
