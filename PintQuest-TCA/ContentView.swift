@@ -10,8 +10,6 @@ import SwiftUI
 
 struct ContentView: View {
     
-//    let store: StoreOf<Beers>
-    
     var body: some View {
         VStack {
             Image(systemName: "globe")
