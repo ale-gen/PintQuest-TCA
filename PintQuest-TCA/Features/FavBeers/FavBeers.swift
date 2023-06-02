@@ -52,7 +52,7 @@ struct FavBeers: ReducerProtocol {
                 return .send(.loadingActive(false))
                 
             case .beer(id: _, action: .onDisappear):
-                return .init(value: .retrieveFavourites)
+                return .task { .retrieveFavourites }
                 
             case .beer(id: _, action: _):
                 return .none
@@ -62,7 +62,7 @@ struct FavBeers: ReducerProtocol {
                 
             case .onAppear:
                 guard state.beers.isEmpty else { return .none }
-                return .init(value: .retrieveFavourites)
+                return .task { .retrieveFavourites }
                 
             case .loadingActive(let isLoading):
                 state.isLoading = isLoading
