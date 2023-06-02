@@ -13,22 +13,17 @@ struct FavBeersView: View {
     private enum Constants {
         static let horizontalPadding: CGFloat = 15.0
         static let verticalPadding: CGFloat = 20.0
-        enum Animation {
-            static let response: CGFloat = 0.9
-            static let dampingFraction: CGFloat = 0.9
-            static let blendDuration: CGFloat = 0.1
-        }
         enum EmptyState {
             static let yOffset: CGFloat = -50.0
             static let image: Image = Image("Beers")
         }
     }
     
-    var store: StoreOf<FavBeers>
     let animation: Namespace.ID
+    var store: StoreOf<FavBeers>
     
     var body: some View {
-        WithViewStore(store, observe: { $0 }) { viewStore in
+        WithViewStore(store) { viewStore in
             Group {
                 ScrollView {
                     LazyVStack {
@@ -38,12 +33,7 @@ struct FavBeersView: View {
                     .padding(.vertical, Constants.verticalPadding)
                 }
             }
-            .onAppear {
-                viewStore.send(.onAppear)
-            }
-            .onDisappear {
-                viewStore.send(.onDisappear)
-            }
+            .onAppear { viewStore.send(.onAppear) }
         }
     }
     
@@ -56,11 +46,12 @@ struct FavBeersView: View {
             content: { beerStore in
                 WithViewStore(beerStore) { beerViewStore in
                     NavigationLink(
-                        destination: BeerDetailView(store: beerStore),
+                        destination: BeerDetailView(store: beerStore,
+                                                    animation: animation),
                         label: {
                             BeerCell(beer: beerViewStore.state.beer,
                                      animation: animation,
-                                     shouldHideImage: false)
+                                     shouldHideImage: beerViewStore.state.showImage)
                         }
                     )
                 }
@@ -73,8 +64,8 @@ struct FavBeersView_Previews: PreviewProvider {
     @Namespace static var animation
     
     static var previews: some View {
-        BeersView(store: Store(initialState: Beers.State(beers: IdentifiedArrayOf(uniqueElements: [BeerDetails.State(id: UUID(), beer: Beer.mock)])),
-                               reducer: Beers()),
-                  animation: animation)
+        FavBeersView(animation: animation,
+                     store: Store(initialState: FavBeers.State(beers: IdentifiedArrayOf(uniqueElements: [BeerDetails.State(id: UUID(), beer: Beer.mock)])),
+                                  reducer: FavBeers()))
     }
 }

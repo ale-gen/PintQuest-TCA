@@ -26,4 +26,11 @@ extension Router {
             ]
         )
     }
+    
+    static func fetchBeersByIds(_ ids: [Int]) -> Route {
+        Route(path: "beers",
+        queryItems: [
+            .init(name: "ids", value: ids.map { String($0) }.joined(separator: "|"))
+        ])
+    }
 }

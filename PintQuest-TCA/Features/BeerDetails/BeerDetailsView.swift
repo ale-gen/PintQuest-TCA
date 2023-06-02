@@ -41,6 +41,9 @@ struct BeerDetailView: View {
         }
         enum Animation {
             static let duration: CGFloat = 0.35
+            static let response: CGFloat = 0.9
+            static let dampingFraction: CGFloat = 0.9
+            static let blendDuration: CGFloat = 0.1
         }
         enum Background {
             static let color: Color = .white
@@ -49,15 +52,18 @@ struct BeerDetailView: View {
         static let spacing: CGFloat = 10.0
     }
     
-//    let animation: Namespace.ID
+    @SwiftUI.Environment(\.presentationMode) var presentationMode
     let store: StoreOf<BeerDetails>
+    let animation: Namespace.ID
     
     var body: some View {
-        WithViewStore(self.store, observe: { $0 }) { viewStore in
+        WithViewStore(self.store) { viewStore in
             ZStack {
-                beerImage(viewStore.beer.imageUrl)
+                beerImage(viewStore.beer.imageUrl, beerId: viewStore.beer.id, showImage: viewStore.showImage)
                 VStack {
-                    navBar(rightButton: favButton(viewStore.isFavourite, action: { viewStore.send(.toggleFavourite) }))
+                    navBar(backButtonAction: { viewStore.send(.onDisappear) },
+                           rightButton: favButton(viewStore.isFavourite,
+                                                  action: { viewStore.send(.toggleFavourite) }))
                     HStack {
                         Spacer(minLength: Constants.Background.leadingSpacing)
                         VStack(alignment: .leading, spacing: Constants.spacing) {
@@ -89,18 +95,21 @@ struct BeerDetailView: View {
                     .ignoresSafeArea()
             )
             .onAppear {
-//                isFavourite = isMarkedAsFav(id: beer.id)
+                viewStore.send(.onAppear, animation: .interactiveSpring(response: Constants.Animation.response,
+                                                                        dampingFraction: Constants.Animation.dampingFraction,
+                                                                        blendDuration: Constants.Animation.blendDuration))
             }
         }
-//        .navigationBarHidden(true)
+        .navigationBarHidden(true)
     }
     
     @ViewBuilder
-    private func navBar(rightButton: some View) -> some View {
+    private func navBar(backButtonAction: @escaping () -> Void, rightButton: some View) -> some View {
         HStack {
             Button {
+                backButtonAction()
                 withAnimation(.easeIn(duration: Constants.Animation.duration)) {
-//                    show.toggle()
+                    presentationMode.wrappedValue.dismiss()
                 }
             } label: {
                 Icons.leftArrow.value
@@ -123,12 +132,12 @@ struct BeerDetailView: View {
     }
     
     @ViewBuilder
-    private func beerImage(_ url: String?) -> some View {
+    private func beerImage(_ url: String?, beerId: Int, showImage: Bool) -> some View {
         ZStack {
             Circle()
                 .fill(Constants.Circle.color)
                 .offset(x: Constants.Circle.additionalXOffset)
-//            if show {
+            if showImage {
                 CachedAsyncImage(url: URL(string: url ?? .empty)) { image in
                     image
                         .resizable()
@@ -136,11 +145,11 @@ struct BeerDetailView: View {
                         .frame(maxHeight: .infinity)
                         .padding(Constants.Image.padding)
                         .shadow(radius: Constants.Image.shadowRadius)
-//                        .matchedGeometryEffect(id: url, in: animation)
+                        .matchedGeometryEffect(id: "\(beerId)/\(String(describing: url))", in: animation)
                 } placeholder: {
                     ProgressView()
                 }
-//            }
+            }
         }
         .offset(x: Constants.Image.xOffset)
     }
@@ -187,14 +196,12 @@ struct BeerDetailView: View {
 }
 
 struct BeerDetailView_Previews: PreviewProvider {
-    @Namespace static var namespace
-
+    @Namespace static var animation
+    
     static var previews: some View {
         BeerDetailView(store: Store(initialState: BeerDetails.State(id: UUID(),
                                                                     beer: Beer.mock),
-                                    reducer: BeerDetails()))
-//        BeerDetailView(animation: namespace,
-//                       show: .constant(true))
+                                    reducer: BeerDetails()),
+                       animation: animation)
     }
 }
-

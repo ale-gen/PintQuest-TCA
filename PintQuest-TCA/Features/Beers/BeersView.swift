@@ -13,22 +13,17 @@ struct BeersView: View {
     private enum Constants {
         static let horizontalPadding: CGFloat = 15.0
         static let verticalPadding: CGFloat = 20.0
-        enum Animation {
-            static let response: CGFloat = 0.9
-            static let dampingFraction: CGFloat = 0.9
-            static let blendDuration: CGFloat = 0.1
-        }
         enum EmptyState {
             static let yOffset: CGFloat = -50.0
             static let image: Image = Image("Beers")
         }
     }
     
-    var store: StoreOf<Beers>
     let animation: Namespace.ID
+    var store: StoreOf<Beers>
     
     var body: some View {
-        WithViewStore(store, observe: { $0 }) { viewStore in
+        WithViewStore(store) { viewStore in
             Group {
                 if viewStore.isLoading {
                     ProgressView()
@@ -59,12 +54,15 @@ struct BeersView: View {
                        ),
             content: { beerStore in
                 WithViewStore(beerStore) { beerViewStore in
+                    //TODO: Remove navigation link
                     NavigationLink(
-                        destination: BeerDetailView(store: beerStore),
+                        destination: BeerDetailView(store: beerStore,
+                                                    animation: animation)
+                        .transition(.identity),
                         label: {
                             BeerCell(beer: beerViewStore.state.beer,
                                      animation: animation,
-                                     shouldHideImage: false)
+                                     shouldHideImage: beerViewStore.state.showImage)
                             .onAppear {
                                 viewStore.send(.retrieveNextPageIfNeeded(currentItemId: beerViewStore.state.beer.id))
                             }
@@ -80,9 +78,9 @@ struct BeersView_Previews: PreviewProvider {
     @Namespace static var animation
     
     static var previews: some View {
-        BeersView(store: Store(initialState: Beers.State(beers: IdentifiedArrayOf(uniqueElements: [BeerDetails.State(id: UUID(), beer: Beer.mock)])),
-                               reducer: Beers()),
-                  animation: animation)
+        BeersView(animation: animation,
+                  store: Store(initialState: Beers.State(beers: IdentifiedArrayOf(uniqueElements: [BeerDetails.State(id: UUID(), beer: Beer.mock)])),
+                                                     reducer: Beers()))
     }
 }
 

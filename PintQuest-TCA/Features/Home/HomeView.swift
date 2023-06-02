@@ -25,16 +25,16 @@ struct HomeView: View {
             NavigationView {
                 VStack {
                     HStack(spacing: Constants.spacing) {
-                        ForEach(Home.State.HomeTab.allCases, id: \.self) { tab in
+                        ForEach(Home.State.allCases, id: \.self) { tab in
                             Button {
-                                viewStore.send(.changeSelectedTab(tab), animation: .easeInOut)
+                                viewStore.send(tab.action, animation: .easeInOut)
                             } label: {
                                 Text(tab.name)
-                                    .foregroundColor(viewStore.selectedTab == tab ? .black : .gray)
-                                    .font(viewStore.selectedTab == tab ? .title3 : .callout)
-                                    .fontWeight(viewStore.selectedTab == tab ? .bold : .semibold)
-                                    .padding(.leading, viewStore.selectedTab == tab ? .zero : Constants.spacing)
-                                    .offset(y: viewStore.selectedTab == tab ? .zero : Constants.yOffset)
+                                    .foregroundColor(viewStore.state.name == tab.name ? .black : .gray)
+                                    .font(viewStore.state.name == tab.name ? .title3 : .callout)
+                                    .fontWeight(viewStore.state.name == tab.name ? .bold : .semibold)
+                                    .padding(.leading, viewStore.state.name == tab.name ? .zero : Constants.spacing)
+                                    .offset(y: viewStore.state == tab ? .zero : Constants.yOffset)
                             }
                         }
                     }
@@ -42,37 +42,20 @@ struct HomeView: View {
                     .padding(.vertical, Constants.verticalPadding)
                     .padding(.horizontal, Constants.horizontalPadding)
                     
-                    switch viewStore.selectedTab {
-                    case .browse:
-                        BeersView(store: beersStore, animation: animation)
-                            .tag(Home.State.HomeTab.browse)
-                    case .fav:
-                        FavBeersView(store: favouritesStore, animation: animation)
-                            .tag(Home.State.HomeTab.fav)
+                    SwitchStore(store) {
+                        CaseLet(state: /Home.State.browse, action: Home.Action.browse) { store in
+                            BeersView(animation: animation, store: store)
+                        }
+                        CaseLet(state: /Home.State.fav, action: Home.Action.favBeers) { store in
+                            FavBeersView(animation: animation, store: store)
+                        }
                     }
                 }
-                //                .searchable(text: $searchName, prompt: Localizable.beerSearchBarPrompt.value)
                 .navigationTitle(Localizable.homeNavigationBarTitle.value)
+                .navigationViewStyle(.stack)
                 .transition(.opacity)
             }
         }
-    }
-}
-
-//MARK: Store inits
-extension HomeView {
-    private var beersStore: StoreOf<Beers> {
-        return store.scope(
-            state: \.beersState,
-            action: Home.Action.beers
-        )
-    }
-    
-    private var favouritesStore: StoreOf<FavBeers> {
-        return store.scope(
-            state: \.favBeersState,
-            action: Home.Action.favBeers
-        )
     }
 }
 
